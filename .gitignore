@@ -1,0 +1,42 @@
+# --- PRIVATE: never commit (registration and revenue records, their OCR output and recognised text) ---
+# gitignore is not privacy: audit `git ls-files` after every commit.
+/data/
+/runs/
+/outputs/
+/logs/
+
+# --- third-party material (installer, unpacked application files) ---
+installer/
+extracted/
+
+# --- downloaded models and local dependencies ---
+models/tessdata_pdf24/
+.deps/
+.deps_test/
+tools/pdfjs/node_modules/
+tools/bin/
+
+# --- build / cache ---
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+*.work.pdf
+*.pdfa.tmp
+
+# --- INTERNAL (kept on disk, never in the public repo): project notes naming private files, PDF24 internals,
+#     and scripts that only run against the private data / this server's queue ---
+/memory.md
+/TODO.md
+/Note_Books/
+/research/01_pdf24_teardown.md
+/research/02_pdf24_components.md
+/scripts/build_bench_kn_private.py
+/scripts/build_bench_hi.py
+/scripts/make_fixtures.py
+/scripts/after_*.sh
+/scripts/run_m1.py
+/scripts/run_m1.sh
+/scripts/run_m1_hi.sh
+/scripts/run_m2.sh

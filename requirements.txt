@@ -1,0 +1,10 @@
+# arjuna-pdf runtime (the Arjuna OCR packages themselves are separate: see README "Arjuna packages")
+pikepdf>=9
+pypdfium2>=4
+numpy
+opencv-python-headless
+# optional: PDF/A output
+# pikepdf[pdfa]>=10.16
+# tests only
+# pdfminer.six
+# pymupdf

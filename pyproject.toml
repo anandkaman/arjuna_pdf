@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "arjuna-pdf"
+version = "0.1.0"
+description = "Searchable PDFs from scanned Kannada+English / Hindi+English documents with Arjuna-OCR (invisible, word-placed text layer; page images untouched)"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "Apache-2.0"}
+authors = [{name = "anandkaman", email = "kamananand98@gmail.com"}]
+dependencies = [
+  "pikepdf>=9",
+  "pypdfium2>=4",
+  "numpy",
+  "opencv-python-headless",
+]
+
+[project.optional-dependencies]
+pdfa = ["pikepdf[pdfa]>=10.16"]
+test = ["pdfminer.six", "pymupdf"]
+
+[project.scripts]
+arjuna-pdf = "arjuna_pdf.cli:main"
+
+[tool.setuptools]
+packages = ["arjuna_pdf"]
+
+[tool.setuptools.package-data]
+arjuna_pdf = ["data/pdf.ttf", "data/*.txt"]

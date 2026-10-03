@@ -1,0 +1,14 @@
+arjuna-pdf
+Copyright 2026 anandkaman
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+This product bundles:
+  * arjuna_pdf/data/pdf.ttf — the "GlyphLessFont" from Tesseract OCR (https://github.com/tesseract-ocr/tesseract),
+    Apache License 2.0, Copyright Google Inc. / Tesseract contributors (arjuna_pdf/data/pdf.ttf.LICENSE-Apache-2.0.txt).
+
+The invisible text-layer technique (one glyph per code point, identity ToUnicode, per-word horizontal scaling) follows
+Tesseract's TessPDFRenderer (Apache-2.0); the code here is an independent implementation.
+
+OCR is performed by Arjuna-OCR (separate packages, Apache-2.0 code; the layout model file is AGPL-3.0 — see the Arjuna
+model cards). This repository does not contain or redistribute any PDF24 Creator code or binaries.
