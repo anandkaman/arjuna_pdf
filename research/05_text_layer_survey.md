@@ -54,3 +54,12 @@ The pdf.js / poppler misses are neighbouring words joined together (geometric wo
 The same test lines written with a HarfBuzz-shaped real font still come back as `शि\x07क्षा`, `कि ताब`, `ಕರ್ನಾ ಟಕ`
 in pdfium / poppler / pdf.js — the encoding decision stands. A user check by hand on an arjuna-pdf output also found
 no copy-paste problems. Still untested: Adobe Acrobat, macOS Preview, Edge.
+
+### Whole-word vs partial selection (same document, pdfium get_text_bounded)
+- Whole-word selections: 1,230 / 1,230 Kannada words intact.
+- Drag-selecting the LEFT HALF of a word: 604 / 1,230 (49 %) end inside a syllable (`ಸಂಖ್ಯೆ` -> `ಸಂಖ್`, `ಶುದ್ಧ` -> `ಶುದ`).
+  Cause: every code point gets an equal-width invisible cell across the word, so cell edges do not line up with the printed
+  aksharas. Shared by Tesseract/PDF24 (same encoding). User observed the same by hand.
+- Possible improvement (not built): per-CID widths in the font's /W array (combining marks + virama zero width, like
+  Occulta) so cell edges fall at akshara starts more often; must be re-checked in all 5 engines (research warned that
+  overlapping zero-width glyphs can trigger "fake bold" de-duplication in some extractors).
