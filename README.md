@@ -90,8 +90,16 @@ PDF -> render each page (pdfium, the scan's native DPI) -> Arjuna: layout -> det
     -> drawn as a foreground Form XObject on the original page
 ```
 
-No real Indic font is used, and the text is not shaped. A HarfBuzz-shaped Kannada or Devanagari font loses the
-conjuncts' ToUnicode mapping, which breaks copy-paste in every extractor we tested (`research/05_text_layer_survey.md`).
+**Why copy-paste of Kannada and Devanagari works.** The invisible text writes every Unicode character as its own
+glyph, in the order the recogniser produced it, with a one-to-one character mapping. arjuna-pdf deliberately does
+*not* draw the hidden text with a real Kannada or Devanagari font. Tools that do, and shape conjuncts with HarfBuzz,
+lose the character mapping of the conjunct glyphs, and copy-paste breaks. The same test lines written that way came
+back as `शि\x07क्षा`, `कि ताब` and `ಕರ್ನಾ ಟಕ` (a control character inside a word, and words split apart) in pdfium,
+poppler and pdf.js (`research/05_text_layer_survey.md`).
+
+What arjuna-pdf's own output gives instead: on a 12-page Kannada document, all 659 words containing conjuncts copy back
+exactly in pdfium (Chrome), pdfminer and MuPDF. poppler gets 643 and pdf.js 655, where the misses are neighbouring words
+joined together, not broken conjuncts. No engine shows a single corrupted character.
 
 ## Repository layout
 
