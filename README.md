@@ -37,10 +37,12 @@ pip install -e ".[pdfa]"    # optional PDF/A output
 The Arjuna models download automatically from Hugging Face on first use (about 230 MB per language, cached in
 `~/.cache/huggingface`). Each pack is pinned to the exact commit arjuna-pdf was tested and benchmarked with:
 
-| `--lang` | Hugging Face repo | version |
+| `--lang` | Hugging Face repo | release (tag = pinned commit) |
 |---|---|---|
-| `kn` (Kannada + English) | [anandkaman/arjuna-ocr-kn-en-inference](https://huggingface.co/anandkaman/arjuna-ocr-kn-en-inference) | 1.3.3, layout v15 |
-| `hi` (Hindi + English) | [anandkaman/arjuna-ocr-hi-en](https://huggingface.co/anandkaman/arjuna-ocr-hi-en) | 1.1.3, layout v15 |
+| `kn` (Kannada + English) | [anandkaman/arjuna-ocr-kn-en-inference](https://huggingface.co/anandkaman/arjuna-ocr-kn-en-inference) | `v1.3.3` = `1b7414a1`, layout v15 |
+| `hi` (Hindi + English) | [anandkaman/arjuna-ocr-hi-en](https://huggingface.co/anandkaman/arjuna-ocr-hi-en) | `v1.1.3` = `072bc43e`, layout v15 |
+
+Use `arjuna-ocr-kn-en-inference` for Kannada: the `arjuna-ocr-kn-en` card repo still holds the older v1.2.1 files.
 
 Optional overrides:
 
