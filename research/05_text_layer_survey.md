@@ -39,3 +39,18 @@ on /Rotate 0/90/180/270, offset CropBox, UserUnit; (4) at scale on real kn + hi 
 ## Code to study
 tesseract src/api/pdfrenderer.cpp (Apache) · OCRmyPDF _graft.py, fpdf_renderer/renderer.py L751-930,
 fpdf2_patches.py, data/Occulta.ttf · hocr-tools hocr-pdf (Apache) · archive-pdf-tools pdfrenderer.py (AGPL).
+
+## Verified on arjuna-pdf's own output (2026-10-04)
+The test above used 2 Hindi + 2 Kannada lines. On a real 12-page Kannada document OCR'd by arjuna-pdf (glyphless encoding,
+CTC word boxes), every word containing a conjunct (virama + consonant) was compared with the recogniser's text:
+| engine | conjunct words copied back exactly | corrupted characters |
+|---|---|---|
+| pdfium (Chrome) | 659 / 659 | 0 |
+| pdfminer | 659 / 659 | 0 |
+| MuPDF | 659 / 659 | 0 |
+| pdf.js (Firefox) | 655 / 659 | 0 |
+| poppler | 643 / 659 | 0 |
+The pdf.js / poppler misses are neighbouring words joined together (geometric word breaking), not broken conjuncts.
+The same test lines written with a HarfBuzz-shaped real font still come back as `शि\x07क्षा`, `कि ताब`, `ಕರ್ನಾ ಟಕ`
+in pdfium / poppler / pdf.js — the encoding decision stands. A user check by hand on an arjuna-pdf output also found
+no copy-paste problems. Still untested: Adobe Acrobat, macOS Preview, Edge.
