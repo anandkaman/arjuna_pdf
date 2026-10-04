@@ -15,9 +15,18 @@ dependencies = [
   "pypdfium2>=4",
   "numpy",
   "opencv-python-headless",
+  "huggingface_hub>=0.20",
+  # runtime of the Arjuna packs' kanen_infer (downloaded from Hugging Face)
+  "onnxruntime>=1.20",
+  "onnx>=1.16",
+  "pyclipper",
+  "shapely",
+  "pyyaml",
+  "regex",
 ]
 
 [project.optional-dependencies]
+gpu = ["onnxruntime-gpu>=1.20"]     # NVIDIA: install instead of onnxruntime (uninstall the CPU wheel first); TensorRT optional
 pdfa = ["pikepdf[pdfa]>=10.16"]
 test = ["pdfminer.six", "pymupdf"]
 

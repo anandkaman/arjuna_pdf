@@ -15,13 +15,29 @@ import io
 
 LOG = logging.getLogger("arjuna_pdf")
 import os
-PACKAGES = {   # language pair -> (Arjuna inference package dir, its config). One per process: both are called `kanen_infer`.
-    # Override with ARJUNA_KN_PKG / ARJUNA_HI_PKG (a directory holding kanen_infer/ + the config + models/).
-    "kn": (os.environ.get("ARJUNA_KN_PKG", "/root/server_ai/Arjuna/deploy/inference_repo"), "kanen.yaml"),
-    # the config MUST be passed: kanen_infer looks for kanen.yaml, the Hindi package ships arjuna_hi.yaml, and without it
-    # the loader silently falls back to the Kannada model repo (found 2026-10-03; same code in the public hi release)
-    "hi": (os.environ.get("ARJUNA_HI_PKG", "/root/server_ai/Arjuna-hi/deploy/arjuna-ocr-hi-en-v1.1"), "arjuna_hi.yaml"),
+# Arjuna language packs on Hugging Face (code + config + models in one repo), pinned to the exact commits arjuna-pdf was
+# tested with (2026-10-04: every file byte-identical to the benchmarked local packages kn v1.3.3 / hi v1.1.3).
+# NOTE: Kannada comes from `arjuna-ocr-kn-en-inference`; the `arjuna-ocr-kn-en` card repo still holds v1.2.1 (layout v12).
+HF_PACKS = {
+    "kn": ("anandkaman/arjuna-ocr-kn-en-inference", "797e6f24dffaa87aa593bf8cb1c5eb7e56d38b26", "kanen.yaml"),
+    # the config MUST be passed: kanen_infer looks for kanen.yaml, the Hindi pack ships arjuna_hi.yaml, and without it the
+    # loader silently falls back to the Kannada models (found 2026-10-03; same code in the public hi release)
+    "hi": ("anandkaman/arjuna-ocr-hi-en", "eb66b9fe3306433f850d13d4a391776f9b51d31d", "arjuna_hi.yaml"),
 }
+ENV_PKG = {"kn": "ARJUNA_KN_PKG", "hi": "ARJUNA_HI_PKG"}   # optional: a local directory with kanen_infer/ + config + models/
+ENV_REV = {"kn": "ARJUNA_KN_REVISION", "hi": "ARJUNA_HI_REVISION"}   # optional: another HF revision (tag/branch/commit)
+
+
+def pack_dir(lang):
+    """Local directory of the Arjuna pack for `lang`: $ARJUNA_<LANG>_PKG if set, else a Hugging Face snapshot (downloaded
+    once into the HF cache, ~170 MB per pack; only code, config, models and VERSION are fetched)."""
+    if os.environ.get(ENV_PKG[lang]): return os.environ[ENV_PKG[lang]]
+    from huggingface_hub import snapshot_download
+    repo, rev, cfg = HF_PACKS[lang]
+    return snapshot_download(repo, revision=os.environ.get(ENV_REV[lang], rev),
+                             allow_patterns=["kanen_infer/*", cfg, "models/**", "models/*", "VERSION"])
+
+
 SCRIPT_RANGE = {"kn": (0x0C80, 0x0CFF), "hi": (0x0900, 0x097F)}   # the recogniser's charset must cover this block
 DPI_MIN, DPI_MAX, DPI_DEFAULT = 100, 300, 200
 VISIBLE_TEXT_MIN = 200   # redo mode: a page keeping >= this many VISIBLE chars is born-digital -> not OCR'd
@@ -45,10 +61,15 @@ def low_memory_cpu(threads=2):
 
 
 def load_ocr(lang, providers=None, **overrides):
-    pkg, cfg = PACKAGES[lang]
-    if "kanen_infer" in sys.modules and not sys.modules["kanen_infer"].__file__.startswith(pkg):
-        raise RuntimeError("another Arjuna language pack is already loaded in this process")
+    pkg = str(Path(pack_dir(lang)).resolve()); cfg = HF_PACKS[lang][2]
+    if "kanen_infer" in sys.modules and not str(Path(sys.modules["kanen_infer"].__file__).resolve()).startswith(pkg):
+        raise RuntimeError("another Arjuna language pack is already loaded in this process (one language per process)")
     sys.path.insert(0, pkg)
+    try:   # kanen_infer.models.resolve() recognises a pack only by kanen.yaml; pin it to THIS pack so the Hindi pack does
+        import kanen_infer.models as _m   # not go and download the Kannada repo (it ships arjuna_hi.yaml instead)
+        _m._resolved = Path(pkg)
+    except ImportError:
+        pass
     from kanen_infer.api import KanEnOCR
     ocr = KanEnOCR(config=str(Path(pkg) / cfg), providers=providers, **overrides)
     check_identity(ocr, lang)

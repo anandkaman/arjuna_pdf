@@ -34,15 +34,23 @@ pip install -e .            # or: pip install -r requirements.txt
 pip install -e ".[pdfa]"    # optional PDF/A output
 ```
 
-arjuna-pdf calls the Arjuna inference packages (`kanen_infer`), which hold the models. Point it at them with:
+The Arjuna models download automatically from Hugging Face on first use (about 230 MB per language, cached in
+`~/.cache/huggingface`). Each pack is pinned to the exact commit arjuna-pdf was tested and benchmarked with:
+
+| `--lang` | Hugging Face repo | version |
+|---|---|---|
+| `kn` (Kannada + English) | [anandkaman/arjuna-ocr-kn-en-inference](https://huggingface.co/anandkaman/arjuna-ocr-kn-en-inference) | 1.3.3, layout v15 |
+| `hi` (Hindi + English) | [anandkaman/arjuna-ocr-hi-en](https://huggingface.co/anandkaman/arjuna-ocr-hi-en) | 1.1.3, layout v15 |
+
+Optional overrides:
 
 ```bash
-export ARJUNA_KN_PKG=/path/to/arjuna-ocr-kn-en      # directory holding kanen_infer/ + kanen.yaml + models/
-export ARJUNA_HI_PKG=/path/to/arjuna-ocr-hi-en      # directory holding kanen_infer/ + arjuna_hi.yaml + models/
+export ARJUNA_KN_PKG=/path/to/local/pack      # use a local copy (kanen_infer/ + config + models/) instead of downloading
+export ARJUNA_HI_REVISION=v1.1.1              # use another Hugging Face revision (tag, branch or commit)
 ```
 
-The Hindi package must be loaded with its own `arjuna_hi.yaml`, and arjuna-pdf does this for you. Before it OCRs
-anything, it checks that the loaded recogniser can actually emit the requested script.
+The Hindi pack must be loaded with its own `arjuna_hi.yaml`, and arjuna-pdf does this for you. Before it OCRs
+anything, it checks that the loaded recogniser can actually emit the requested script. Use one language per process.
 
 ## Use
 

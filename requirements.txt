@@ -1,8 +1,16 @@
-# arjuna-pdf runtime (the Arjuna OCR packages themselves are separate: see README "Arjuna packages")
+# arjuna-pdf runtime. The Arjuna packs (code + models) download from Hugging Face on first use.
 pikepdf>=9
 pypdfium2>=4
 numpy
 opencv-python-headless
+huggingface_hub>=0.20
+# runtime of the Arjuna packs' kanen_infer
+onnxruntime>=1.20          # NVIDIA GPU: onnxruntime-gpu instead (and optionally tensorrt)
+onnx>=1.16
+pyclipper
+shapely
+pyyaml
+regex
 # optional: PDF/A output
 # pikepdf[pdfa]>=10.16
 # tests only
