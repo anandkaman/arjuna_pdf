@@ -15,14 +15,15 @@ import io
 
 LOG = logging.getLogger("arjuna_pdf")
 import os
-# Arjuna language packs on Hugging Face (code + config + models in one repo), pinned to the exact commits arjuna-pdf was
-# tested with (2026-10-04: every file byte-identical to the benchmarked local packages kn v1.3.3 / hi v1.1.3).
+# Arjuna language packs on Hugging Face (code + config + models in one repo), pinned to the RELEASE commits
+# "v1.3.3" / "v1.1.3" (2026-10-04 04:20 UTC), every file byte-identical to the benchmarked local packages.
+# The v1.3.3 / v1.1.3 TAGS point to older commits with different code -- pin commits, not those tags.
 # NOTE: Kannada comes from `arjuna-ocr-kn-en-inference`; the `arjuna-ocr-kn-en` card repo still holds v1.2.1 (layout v12).
 HF_PACKS = {
-    "kn": ("anandkaman/arjuna-ocr-kn-en-inference", "797e6f24dffaa87aa593bf8cb1c5eb7e56d38b26", "kanen.yaml"),
+    "kn": ("anandkaman/arjuna-ocr-kn-en-inference", "1b7414a101c6b4a07f09911ded85f66369ef11d9", "kanen.yaml"),
     # the config MUST be passed: kanen_infer looks for kanen.yaml, the Hindi pack ships arjuna_hi.yaml, and without it the
     # loader silently falls back to the Kannada models (found 2026-10-03; same code in the public hi release)
-    "hi": ("anandkaman/arjuna-ocr-hi-en", "eb66b9fe3306433f850d13d4a391776f9b51d31d", "arjuna_hi.yaml"),
+    "hi": ("anandkaman/arjuna-ocr-hi-en", "072bc43ec22f8329647eacc4ee4cb8a4b2f937bf", "arjuna_hi.yaml"),
 }
 ENV_PKG = {"kn": "ARJUNA_KN_PKG", "hi": "ARJUNA_HI_PKG"}   # optional: a local directory with kanen_infer/ + config + models/
 ENV_REV = {"kn": "ARJUNA_KN_REVISION", "hi": "ARJUNA_HI_REVISION"}   # optional: another HF revision (tag/branch/commit)
